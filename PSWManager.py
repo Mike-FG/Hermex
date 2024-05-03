@@ -2,8 +2,9 @@ import string
 import random
 import secrets
 
-import tkinter as tk
-from tkinter import messagebox
+import customtkinter
+
+
 
 def generarPasswAleatoria():
     #El algoritmo debe ser randomizar 3 espacios de caracteres 'normales', entre esos espacios cierto número de caracteres especiales y numeros
@@ -78,6 +79,11 @@ def opcionCuatro():
     if respuesta in diccionario_contrasennas:
         del diccionario_contrasennas[respuesta]
         actualizarTxt()
+
+def ctkInit():
+    customtkinter.set_appearance_mode("dark")
+    customtkinter.set_default_color_theme("dark-blue")
+
     
 # Definir el diccionario con la informacion
 diccionario_contrasennas = {}
@@ -100,19 +106,27 @@ with open(nombre_archivo, 'r') as archivo:
         clave, valor = linea.strip().split(": ")
         diccionario_contrasennas[clave] = valor
 
+ctkInit()
 # Create main window
-root = tk.Tk()
+
+root = customtkinter.CTk()
 root.title("Password Manager")
+root.geometry("400x350")
+
+frame = customtkinter.CTkFrame(master=root)
+frame.pack(side=customtkinter.LEFT, fill=customtkinter.BOTH, expand=True)
 
 # Create buttons
-btn_crear = tk.Button(root, text="Crear Nueva Contraseña", command=opcionUno)
-btn_crear.pack(pady=5)
+opciones = ["Crear Nueva Contraseña", "Ver Contraseñas", "Eliminar Contraseña"]
+for opcion in opciones:
+    boton = customtkinter.CTkButton(frame, text= opcion, command=lambda  o=opcion: mostrar_resultado(o))
+    boton.pack(pady=20,fill=customtkinter.BOTH)
 
-btn_ver = tk.Button(root, text="Ver Contraseñas", command=opcionDos)
-btn_ver.pack(pady=5)
+frame2 = customtkinter.CTkFrame(root)
+frame2.pack(side= customtkinter.RIGHT, fill=customtkinter.BOTH, expand=True)
 
-btn_eliminar = tk.Button(root, text="Eliminar Contraseña", command=opcionCuatro)
-btn_eliminar.pack(pady=5)
+entry = customtkinter.CTkEntry(frame2, font=("Arial", 14))
+entry.pack(side=customtkinter.BOTTOM, fill=customtkinter.BOTH)
 
 # Run the main event loop
 root.mainloop()
