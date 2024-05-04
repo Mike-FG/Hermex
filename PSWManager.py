@@ -45,8 +45,6 @@ def actualizarTxt():
             archivo.write(f"{pagina}: {contraseña}\n")
 
     print(f"Los elementos del diccionario se han guardado en '{nombre_archivo}'.")
-    pintaBotonesContrasenna()
-    print("Se han vuelto a imprimir los botones actualizados")
 
 def opcionUno():
     pagina = entry.get().strip()
@@ -104,6 +102,15 @@ def opcionCuatro():
     if respuesta in diccionario_contrasennas:
         del diccionario_contrasennas[respuesta]
         actualizarTxt()
+        pintaBotonesContrasenna
+    entry.delete(0, customtkinter.END)
+
+def opcionCinco():
+    respuesta = entry.get()
+    
+    clave, valor = respuesta.split(":")
+    diccionario_contrasennas[clave] = valor
+    actualizarTxt()
     entry.delete(0, customtkinter.END)
 
 def ctkInit():
@@ -121,7 +128,7 @@ def pintaBotonesContrasenna():
         boton.destroy()
     # Crear y colocar los botones
     for clave in diccionario_contrasennas.keys():
-        boton = customtkinter.CTkButton(frame2, text=clave, command=lambda c=clave: mostrar_info(c))
+        boton = customtkinter.CTkButton(frame3, text=clave, command=lambda c=clave: mostrar_info(c))
         boton.pack(pady=5)
 
         botones_contrasennas.append(boton)
@@ -158,7 +165,7 @@ frame = customtkinter.CTkFrame(master=root)
 frame.pack(side=customtkinter.LEFT, fill=customtkinter.BOTH, expand=True)
 
 # Create buttons
-opciones = ["Crear Nueva Contraseña", "Ver Contraseñas", "Eliminar Contraseña"]
+opciones = ["Crear nueva contraseña", "Ver contraseñas", "Eliminar contraseña", "Añadir contraseña personalizada"]
 botones_contrasennas = []
 boton1 = customtkinter.CTkButton(frame, text= opciones[0], command=opcionUno)
 boton1.pack(pady=20,fill=customtkinter.BOTH)
@@ -169,8 +176,14 @@ boton1.pack(pady=20,fill=customtkinter.BOTH)
 boton1 = customtkinter.CTkButton(frame, text= opciones[2], command=opcionCuatro)
 boton1.pack(pady=20,fill=customtkinter.BOTH)
 
+boton1 = customtkinter.CTkButton(frame, text= opciones[3], command=opcionCinco)
+boton1.pack(pady=20,fill=customtkinter.BOTH)
+
 frame2 = customtkinter.CTkFrame(root)
 frame2.pack(pady=20, side= customtkinter.RIGHT, fill=customtkinter.BOTH, expand=True)
+
+frame3 = customtkinter.CTkScrollableFrame(frame2)
+frame3.pack(side= customtkinter.TOP, fill=customtkinter.BOTH, expand=True)
 
 entry = customtkinter.CTkEntry(frame2, font=("Arial", 14))
 entry.pack(side=customtkinter.BOTTOM, fill=customtkinter.BOTH)
