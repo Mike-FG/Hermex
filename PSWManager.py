@@ -68,41 +68,12 @@ def opcionUno():
     #print("fContraseña {contraseñaGenerada} añadida...")
 
     actualizarTxt()
+    pintaBotonesContrasenna()
     entry.delete(0, customtkinter.END)
-    '''Resolucion para consola
-    # pagina = input("¿Para qué página/app es la contraseña? ").strip()
-    # acabado = False
-
-    # #Si ya existe la pagina/web
-    # if pagina in diccionario_contrasennas:
-    #     return pagina
 
 
-    # while not acabado:
-    #     #print("Generando contraseña...")
-    #     contraseñaGenerada = generarPasswAleatoria()
-    #     confirmacionContraseña = input(f"La contraseña generada es: {contraseñaGenerada}, te parece bien? ").strip().lower()
-        
-    #     if confirmacionContraseña == "si" or confirmacionContraseña == "s":
-    #         diccionario_contrasennas[pagina] = contraseñaGenerada
-    #         #print("Contraseña añadida...")
-    #         acabado = True
-    actualizarTxt()'''
 
 def opcionDos():
-    # Imprimir todas las contraseñas del diccionario
-    #print("--- Contraseñas guardadas ---")
-    contrasennas = ""
-    for clave,contrasenna in diccionario_contrasennas.items():
-        contrasennas=contrasennas + (" "+clave +": " +contrasenna +"\n")
-        #print(f"{clave} : {contrasenna}")
-    #print("-----------------------------")
-    #info_contrasennas.set(contrasennas)
-
-    pintaBotonesContrasenna()
-
-
-def opcionCuatro():
     respuesta = entry.get()
 
     if respuesta in diccionario_contrasennas:
@@ -111,7 +82,7 @@ def opcionCuatro():
         pintaBotonesContrasenna()
     entry.delete(0, customtkinter.END)
 
-def opcionCinco():
+def opcionTres():
     respuesta = entry.get()
     
     try:
@@ -121,7 +92,7 @@ def opcionCinco():
 
         diccionario_contrasennas[clave] = valor
         actualizarTxt()
-
+        pintaBotonesContrasenna()
         entry.delete(0, customtkinter.END)
 
     except(TypeError, ValueError) as e:
@@ -161,7 +132,8 @@ def open_login_window():
     # Create Login window
     global login_window
     login_window = customtkinter.CTk()
-    login_window.title("Hermex 🍁 \N{maple leaf}")
+    login_window.wm_iconbitmap("Hermex_logo.ico")
+    login_window.title("Hermex")
     login_window.geometry("300x200")
 
     customtkinter.CTkLabel(login_window, text="Contraseña:").pack()
@@ -171,6 +143,8 @@ def open_login_window():
 
     login_button = customtkinter.CTkButton(login_window, text="Iniciar Sesión", command=login)
     login_button.pack()
+
+
 
     # Run the main event loop
     login_window.mainloop()
@@ -188,7 +162,8 @@ def creaContrasennaHermex():
 def open_main_window():
     # Create main window
     root = customtkinter.CTk()
-    root.title("Hermex 🍁")
+    root.wm_iconbitmap("Hermex_logo.ico")
+    root.title("Hermex")
     root.geometry("700x350")
 
     frame = customtkinter.CTkFrame(master=root)
@@ -202,13 +177,13 @@ def open_main_window():
     boton1 = customtkinter.CTkButton(frame, text= opciones[0], command=opcionUno)
     boton1.pack(pady=20,fill=customtkinter.BOTH)
 
-    boton1 = customtkinter.CTkButton(frame, text= opciones[1], command=opcionDos)
+    # boton1 = customtkinter.CTkButton(frame, text= opciones[1], command=opcionDos)
+    # boton1.pack(pady=20,fill=customtkinter.BOTH)
+
+    boton1 = customtkinter.CTkButton(frame, text= opciones[2], command=opcionDos)
     boton1.pack(pady=20,fill=customtkinter.BOTH)
 
-    boton1 = customtkinter.CTkButton(frame, text= opciones[2], command=opcionCuatro)
-    boton1.pack(pady=20,fill=customtkinter.BOTH)
-
-    boton1 = customtkinter.CTkButton(frame, text= opciones[3], command=opcionCinco)
+    boton1 = customtkinter.CTkButton(frame, text= opciones[3], command=opcionTres)
     boton1.pack(pady=20,fill=customtkinter.BOTH)
 
     texto_info = customtkinter.CTkLabel(frame, text="Formato válido-> 'Aplicación : ContraseñaPersonalizada'")
@@ -221,17 +196,19 @@ def open_main_window():
     frame3 = customtkinter.CTkScrollableFrame(frame2)
     frame3.pack(side= customtkinter.TOP, fill=customtkinter.BOTH, expand=True)
 
-    frame_input_feedback = customtkinter.CTkFrame(frame2)
-    frame_input_feedback.pack(side=customtkinter.BOTTOM,fill=customtkinter.BOTH, expand=True)
+    # frame_input_feedback = customtkinter.CTkFrame(frame2)
+    # frame_input_feedback.pack(side=customtkinter.BOTTOM,fill=customtkinter.BOTH, expand=True)
 
+    
     # feedback = customtkinter.CTkTextbox(frame_input_feedback, font=("Arial", 14), width= 350, height=10)
     # feedback.pack(side= customtkinter.TOP)
 
     global entry
-    entry = customtkinter.CTkEntry(frame_input_feedback, font=("Arial", 14))
+    entry = customtkinter.CTkEntry(frame2, font=("Arial", 14))
     entry.pack(side=customtkinter.BOTTOM, fill=customtkinter.BOTH)
 
-    texto_entry = customtkinter.StringVar()
+    pintaBotonesContrasenna()
+    # texto_entry = customtkinter.StringVar()
 
     root.mainloop()
 # def dar_feedback(texto):
@@ -245,10 +222,14 @@ caracteres_normales = string.ascii_letters
 caracteres_especiales = string.punctuation
 caracteres_numeros =  string.digits
 
+# Eliminamos ':' de los posibles
+caracteres_especiales.replace(':', '')
+
+# Creamos los grupos de caracteres permitidos
 caracteres_permitidos1 = caracteres_normales + caracteres_numeros
 caracteres_permitidos2 = caracteres_especiales + caracteres_numeros
 
-#Leer el contenido que ya existe
+# Leer el contenido que ya existe
 # Nombre del archivo de texto
 nombre_archivo = "contraseñas.txt"
 clave_archivo = "config.bin"
@@ -295,7 +276,8 @@ if os.path.exists(hermex_archivo):
 else:
     # Create Register window
     register_window = customtkinter.CTk()
-    register_window.title("Hermex 🍁")
+    register_window.wm_iconbitmap("Hermex_logo.ico")
+    register_window.title("Hermex")
     register_window.geometry("300x200")
 
     customtkinter.CTkLabel(register_window, text="Introduce una contraseña maestra\n para acceder a Hermex:").pack()
@@ -326,7 +308,7 @@ else:
 #     elif answer == 2:
 #         opcionDos(diccionario_contrasennas)
 #     elif answer == 3:
-#         opcionCuatro(diccionario_contrasennas, nombre_archivo)
+#         opcionDos(diccionario_contrasennas, nombre_archivo)
 #     else:
 #         loop = False
 '''
