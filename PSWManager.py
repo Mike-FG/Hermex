@@ -150,17 +150,45 @@ def pintaBotonesContrasenna():
 def login():
     login_password = password_entry.get()
 
-    if "MASTER" == login_password:
+    if hermex_contrasenna == login_password:
         # messagebox.showinfo("Login", "Inicio de sesión exitoso")
         login_window.destroy()
         open_main_window()
     else:
         messagebox.showinfo("Login", "Contraseña incorrecta")
 
+def open_login_window():
+    # Create Login window
+    global login_window
+    login_window = customtkinter.CTk()
+    login_window.title("Hermex 🍁 \N{maple leaf}")
+    login_window.geometry("300x200")
+
+    customtkinter.CTkLabel(login_window, text="Contraseña:").pack()
+    global password_entry
+    password_entry = customtkinter.CTkEntry(login_window, show="*")
+    password_entry.pack(pady=20)
+
+    login_button = customtkinter.CTkButton(login_window, text="Iniciar Sesión", command=login)
+    login_button.pack()
+
+    # Run the main event loop
+    login_window.mainloop()
+
+def creaContrasennaHermex():
+    with open(hermex_archivo, "w") as archivo:
+        global hermex_contrasenna
+        hermex_contrasenna = register_entry.get()
+        hermex_contrasenna_cifrada = cipher_suite.encrypt(f"{hermex_contrasenna}".encode()).decode()
+        archivo.write(f"{hermex_contrasenna_cifrada}\n")   
+    
+    register_window.destroy()
+    open_login_window()
+
 def open_main_window():
     # Create main window
     root = customtkinter.CTk()
-    root.title("Password Manager 🔒")
+    root.title("Hermex 🍁")
     root.geometry("700x350")
 
     frame = customtkinter.CTkFrame(master=root)
@@ -224,10 +252,12 @@ caracteres_permitidos2 = caracteres_especiales + caracteres_numeros
 # Nombre del archivo de texto
 nombre_archivo = "contraseñas.txt"
 clave_archivo = "config.bin"
-
+hermex_archivo= "config.txt"
 # Definimos nombres de las variables de la clave
 cipher_key = None
 cipher_suite = None
+
+ctkInit()
 
 # Conseguimos la clave o la generamos si no existe el archivo
 if not os.path.exists(clave_archivo):
@@ -255,21 +285,29 @@ else:
     with open(nombre_archivo, "w") as archivo:
         archivo.close()
 
-ctkInit()
-# Create Login window
-login_window = customtkinter.CTk()
-login_window.title("Login")
-login_window.geometry("150x200")
+if os.path.exists(hermex_archivo):
+    with open(hermex_archivo, "r") as archivo:
+        global hermex_contrasenna
+        hermex_contrasenna_cifrada = archivo.readline()
+        hermex_contrasenna = cipher_suite.decrypt(hermex_contrasenna_cifrada.encode()).decode()
+    
+    open_login_window()
+else:
+    # Create Register window
+    register_window = customtkinter.CTk()
+    register_window.title("Hermex 🍁")
+    register_window.geometry("300x200")
 
-customtkinter.CTkLabel(login_window, text="Contraseña:").pack()
-password_entry = customtkinter.CTkEntry(login_window, show="*")
-password_entry.pack()
+    customtkinter.CTkLabel(register_window, text="Introduce una contraseña maestra\n para acceder a Hermex:").pack()
+    global register_entry
+    register_entry = customtkinter.CTkEntry(register_window)
+    register_entry.pack(pady=20)
 
-login_button = customtkinter.CTkButton(login_window, text="Iniciar Sesión", command=login)
-login_button.pack()
+    register_button = customtkinter.CTkButton(register_window, text="Crear cuenta", command=creaContrasennaHermex)
+    register_button.pack()
 
-# Run the main event loop
-login_window.mainloop()
+    register_window.mainloop()
+
 
 '''# loop = True
 # while loop:
