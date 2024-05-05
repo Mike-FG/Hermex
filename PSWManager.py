@@ -50,7 +50,7 @@ def actualizarTxt():
         #     for pagina, contraseña in diccionario_contrasennas.items():
         #         archivo.write(f"{pagina}: {contraseña}\n")
 
-    print(f"Los elementos del diccionario se han guardado en '{nombre_archivo}'.")
+    ##print(f"Los elementos del diccionario se han guardado en '{nombre_archivo}'.")
 
 def opcionUno():
     pagina = entry.get().strip()
@@ -61,11 +61,11 @@ def opcionUno():
     if pagina in diccionario_contrasennas:
          return pagina
 
-    print("Generando contraseña...")
+    #print("Generando contraseña...")
     contraseñaGenerada = generarPasswAleatoria()
 
     diccionario_contrasennas[pagina] = contraseñaGenerada
-    print("fContraseña {contraseñaGenerada} añadida...")
+    #print("fContraseña {contraseñaGenerada} añadida...")
 
     actualizarTxt()
     entry.delete(0, customtkinter.END)
@@ -79,24 +79,24 @@ def opcionUno():
 
 
     # while not acabado:
-    #     print("Generando contraseña...")
+    #     #print("Generando contraseña...")
     #     contraseñaGenerada = generarPasswAleatoria()
     #     confirmacionContraseña = input(f"La contraseña generada es: {contraseñaGenerada}, te parece bien? ").strip().lower()
         
     #     if confirmacionContraseña == "si" or confirmacionContraseña == "s":
     #         diccionario_contrasennas[pagina] = contraseñaGenerada
-    #         print("Contraseña añadida...")
+    #         #print("Contraseña añadida...")
     #         acabado = True
     actualizarTxt()'''
 
 def opcionDos():
     # Imprimir todas las contraseñas del diccionario
-    print("--- Contraseñas guardadas ---")
+    #print("--- Contraseñas guardadas ---")
     contrasennas = ""
     for clave,contrasenna in diccionario_contrasennas.items():
         contrasennas=contrasennas + (" "+clave +": " +contrasenna +"\n")
-        print(f"{clave} : {contrasenna}")
-    print("-----------------------------")
+        #print(f"{clave} : {contrasenna}")
+    #print("-----------------------------")
     #info_contrasennas.set(contrasennas)
 
     pintaBotonesContrasenna()
@@ -135,7 +135,7 @@ def mostrar_info(clave):
     # Esta función copia el texto del valor de la clave en el portapapeles
     valor = diccionario_contrasennas.get(clave, "")
     pyperclip.copy(valor)
-    print(f"Valor de la clave {clave} copiado al portapapeles: {valor}")
+    #print(f"Valor de la clave {clave} copiado al portapapeles: {valor}")
 
 def pintaBotonesContrasenna():
     for boton in botones_contrasennas:
@@ -313,11 +313,11 @@ else:
 # while loop:
 #     #Quiere meter una nueva contraseña?
 #     #sí/no
-#     print("---- MENÚ ----")
-#     print("1. Crear nueva contraseña")
-#     print("2. Ver todas las contraseñas")
-#     print("3. Eliminar una web/app")
-#     print("-------------")
+#     #print("---- MENÚ ----")
+#     #print("1. Crear nueva contraseña")
+#     #print("2. Ver todas las contraseñas")
+#     #print("3. Eliminar una web/app")
+#     #print("-------------")
 
 #     answer = int(input())
 
