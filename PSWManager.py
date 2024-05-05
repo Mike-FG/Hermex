@@ -113,7 +113,7 @@ def pintaBotonesContrasenna():
         boton.destroy()
     # Crear y colocar los botones
     for clave in diccionario_contrasennas.keys():
-        boton = customtkinter.CTkButton(frame3, text=clave, command=lambda c=clave: mostrar_info(c))
+        boton = customtkinter.CTkButton(frame3, text=clave, fg_color="#0E46A3",command=lambda c=clave: mostrar_info(c))
         boton.pack(pady=5)
         
         botones_contrasennas.append(boton)
@@ -136,18 +136,27 @@ def open_login_window():
     login_window.title("Hermex")
     login_window.geometry("300x200")
 
-    customtkinter.CTkLabel(login_window, text="Contraseña:").pack()
+    customtkinter.CTkLabel(login_window, text="Introduce la contraseña para iniciar sesión\n o para renovar la contraseña").pack()
     global password_entry
     password_entry = customtkinter.CTkEntry(login_window, show="*")
     password_entry.pack(pady=20)
 
-    login_button = customtkinter.CTkButton(login_window, text="Iniciar Sesión", command=login)
-    login_button.pack()
+    login_button = customtkinter.CTkButton(login_window, text="Iniciar Sesión", fg_color="#0E46A3", command=login)
+    login_button.pack(pady= 5)
 
-
+    login_button2 = customtkinter.CTkButton(login_window, text="Cambiar contraseña", fg_color="#0E46A3", command=register_validation)
+    login_button2.pack(pady= 5)
 
     # Run the main event loop
     login_window.mainloop()
+
+def register_validation():
+
+    if password_entry.get() == hermex_contrasenna:
+        login_window.destroy()
+        open_register_window()
+    else:
+         messagebox.showinfo("Advertencia", "Introduce la contraseña actual")
 
 def creaContrasennaHermex():
     with open(hermex_archivo, "w") as archivo:
@@ -174,16 +183,16 @@ def open_main_window():
     global botones_contrasennas
     botones_contrasennas = []
 
-    boton1 = customtkinter.CTkButton(frame, text= opciones[0], command=opcionUno)
+    boton1 = customtkinter.CTkButton(frame, text= opciones[0], fg_color="#0E46A3", command=opcionUno)
     boton1.pack(pady=20,fill=customtkinter.BOTH)
 
     # boton1 = customtkinter.CTkButton(frame, text= opciones[1], command=opcionDos)
     # boton1.pack(pady=20,fill=customtkinter.BOTH)
 
-    boton1 = customtkinter.CTkButton(frame, text= opciones[2], command=opcionDos)
+    boton1 = customtkinter.CTkButton(frame, text= opciones[2], fg_color="#0E46A3", command=opcionDos)
     boton1.pack(pady=20,fill=customtkinter.BOTH)
 
-    boton1 = customtkinter.CTkButton(frame, text= opciones[3], command=opcionTres)
+    boton1 = customtkinter.CTkButton(frame, text= opciones[3], fg_color="#0E46A3", command=opcionTres)
     boton1.pack(pady=20,fill=customtkinter.BOTH)
 
     texto_info = customtkinter.CTkLabel(frame, text="Formato válido-> 'Aplicación : ContraseñaPersonalizada'")
@@ -211,8 +220,24 @@ def open_main_window():
     # texto_entry = customtkinter.StringVar()
 
     root.mainloop()
-# def dar_feedback(texto):
-#     feedback.insert(texto)
+
+def open_register_window():
+    # Create Register window
+    global register_window
+    register_window = customtkinter.CTk()
+    register_window.wm_iconbitmap("Hermex_logo.ico")
+    register_window.title("Hermex")
+    register_window.geometry("300x200")
+
+    customtkinter.CTkLabel(register_window, text="Introduce una contraseña maestra\n para acceder a Hermex:").pack()
+    global register_entry
+    register_entry = customtkinter.CTkEntry(register_window)
+    register_entry.pack(pady=20)
+
+    register_button = customtkinter.CTkButton(register_window, text="Crear cuenta", fg_color="#0E46A3", command=creaContrasennaHermex)
+    register_button.pack()
+
+    register_window.mainloop()
     
 # Definir el diccionario con la informacion
 diccionario_contrasennas = {}
@@ -274,21 +299,7 @@ if os.path.exists(hermex_archivo):
     
     open_login_window()
 else:
-    # Create Register window
-    register_window = customtkinter.CTk()
-    register_window.wm_iconbitmap("Hermex_logo.ico")
-    register_window.title("Hermex")
-    register_window.geometry("300x200")
-
-    customtkinter.CTkLabel(register_window, text="Introduce una contraseña maestra\n para acceder a Hermex:").pack()
-    global register_entry
-    register_entry = customtkinter.CTkEntry(register_window)
-    register_entry.pack(pady=20)
-
-    register_button = customtkinter.CTkButton(register_window, text="Crear cuenta", command=creaContrasennaHermex)
-    register_button.pack()
-
-    register_window.mainloop()
+    open_register_window()
 
 
 '''# loop = True
