@@ -3,7 +3,9 @@ import random
 import secrets
 import pyperclip
 import customtkinter
-
+from tkinter import messagebox
+import os
+from cryptography.fernet import Fernet # Para encriptación del archivo
 
 def generarPasswAleatoria():
     #El algoritmo debe ser randomizar 3 espacios de caracteres 'normales', entre esos espacios cierto número de caracteres especiales y numeros
@@ -39,10 +41,14 @@ def generarPasswAleatoria():
     return resultadoFinal
 
 def actualizarTxt():
-    # Escribir los elementos del diccionario en el archivo de texto
     with open(nombre_archivo, 'w') as archivo:
-        for pagina, contraseña in diccionario_contrasennas.items():
-            archivo.write(f"{pagina}: {contraseña}\n")
+        for clave, valor in diccionario_contrasennas.items():
+            linea_cifrada = cipher_suite.encrypt(f"{clave}:{valor}".encode()).decode()
+            archivo.write(f"{linea_cifrada}\n")
+        # Escribir los elementos del diccionario en el archivo de texto
+        # with open(nombre_archivo, 'w') as archivo:
+        #     for pagina, contraseña in diccionario_contrasennas.items():
+        #         archivo.write(f"{pagina}: {contraseña}\n")
 
     print(f"Los elementos del diccionario se han guardado en '{nombre_archivo}'.")
 
@@ -102,16 +108,24 @@ def opcionCuatro():
     if respuesta in diccionario_contrasennas:
         del diccionario_contrasennas[respuesta]
         actualizarTxt()
-        pintaBotonesContrasenna
+        pintaBotonesContrasenna()
     entry.delete(0, customtkinter.END)
 
 def opcionCinco():
     respuesta = entry.get()
     
-    clave, valor = respuesta.split(":")
-    diccionario_contrasennas[clave] = valor
-    actualizarTxt()
-    entry.delete(0, customtkinter.END)
+    try:
+        clave, valor = respuesta.split(":")
+        clave = clave.strip()
+        valor = valor.strip()
+
+        diccionario_contrasennas[clave] = valor
+        actualizarTxt()
+
+        entry.delete(0, customtkinter.END)
+
+    except(TypeError, ValueError) as e:
+        print("Input no válido para crear contraseña personalizada", e)
 
 def ctkInit():
     customtkinter.set_appearance_mode("dark")
@@ -130,9 +144,71 @@ def pintaBotonesContrasenna():
     for clave in diccionario_contrasennas.keys():
         boton = customtkinter.CTkButton(frame3, text=clave, command=lambda c=clave: mostrar_info(c))
         boton.pack(pady=5)
-
+        
         botones_contrasennas.append(boton)
 
+def login():
+    login_password = password_entry.get()
+
+    if "MASTER" == login_password:
+        # messagebox.showinfo("Login", "Inicio de sesión exitoso")
+        login_window.destroy()
+        open_main_window()
+    else:
+        messagebox.showinfo("Login", "Contraseña incorrecta")
+
+def open_main_window():
+    # Create main window
+    root = customtkinter.CTk()
+    root.title("Password Manager 🔒")
+    root.geometry("700x350")
+
+    frame = customtkinter.CTkFrame(master=root)
+    frame.pack(side=customtkinter.LEFT, fill=customtkinter.BOTH, expand=True)
+
+    # Create buttons
+    opciones = ["Crear nueva contraseña", "Ver contraseñas", "Eliminar contraseña", "Añadir contraseña personalizada"]
+    global botones_contrasennas
+    botones_contrasennas = []
+
+    boton1 = customtkinter.CTkButton(frame, text= opciones[0], command=opcionUno)
+    boton1.pack(pady=20,fill=customtkinter.BOTH)
+
+    boton1 = customtkinter.CTkButton(frame, text= opciones[1], command=opcionDos)
+    boton1.pack(pady=20,fill=customtkinter.BOTH)
+
+    boton1 = customtkinter.CTkButton(frame, text= opciones[2], command=opcionCuatro)
+    boton1.pack(pady=20,fill=customtkinter.BOTH)
+
+    boton1 = customtkinter.CTkButton(frame, text= opciones[3], command=opcionCinco)
+    boton1.pack(pady=20,fill=customtkinter.BOTH)
+
+    texto_info = customtkinter.CTkLabel(frame, text="Formato válido-> 'Aplicación : ContraseñaPersonalizada'")
+    texto_info.pack(fill=customtkinter.BOTH)
+
+    frame2 = customtkinter.CTkFrame(root)
+    frame2.pack(side= customtkinter.RIGHT, fill=customtkinter.BOTH, expand=True)
+
+    global frame3
+    frame3 = customtkinter.CTkScrollableFrame(frame2)
+    frame3.pack(side= customtkinter.TOP, fill=customtkinter.BOTH, expand=True)
+
+    frame_input_feedback = customtkinter.CTkFrame(frame2)
+    frame_input_feedback.pack(side=customtkinter.BOTTOM,fill=customtkinter.BOTH, expand=True)
+
+    # feedback = customtkinter.CTkTextbox(frame_input_feedback, font=("Arial", 14), width= 350, height=10)
+    # feedback.pack(side= customtkinter.TOP)
+
+    global entry
+    entry = customtkinter.CTkEntry(frame_input_feedback, font=("Arial", 14))
+    entry.pack(side=customtkinter.BOTTOM, fill=customtkinter.BOTH)
+
+    texto_entry = customtkinter.StringVar()
+
+    root.mainloop()
+# def dar_feedback(texto):
+#     feedback.insert(texto)
+    
 # Definir el diccionario con la informacion
 diccionario_contrasennas = {}
 
@@ -147,54 +223,53 @@ caracteres_permitidos2 = caracteres_especiales + caracteres_numeros
 #Leer el contenido que ya existe
 # Nombre del archivo de texto
 nombre_archivo = "contraseñas.txt"
+clave_archivo = "config.bin"
+
+# Definimos nombres de las variables de la clave
+cipher_key = None
+cipher_suite = None
+
+# Conseguimos la clave o la generamos si no existe el archivo
+if not os.path.exists(clave_archivo):
+    cipher_key = Fernet.generate_key()
+    with open(clave_archivo, "wb") as archivoClave:
+        archivoClave.write(cipher_key)
+else:
+    with open(clave_archivo, "rb") as archivoClave:
+        cipher_key = archivoClave.read()
+
+cipher_suite = Fernet(cipher_key)
 
 # Leer el contenido del archivo de texto y guardar en el diccionario
-with open(nombre_archivo, 'r') as archivo:
-    for linea in archivo:
-        clave, valor = linea.strip().split(": ")
-        diccionario_contrasennas[clave] = valor
+if os.path.exists(nombre_archivo):
+    with open(nombre_archivo, 'r') as archivo:
+        if os.path.getsize(nombre_archivo) > 0:
+            lineas_texto = archivo.readlines()
 
+            for linea_cifrada in lineas_texto:
+                linea_descifrada = cipher_suite.decrypt(linea_cifrada.encode()).decode()    
 
-# Create main window
+                app, contrasenna = linea_descifrada.split(":")
+                diccionario_contrasennas[app] = contrasenna
+else:
+    with open(nombre_archivo, "w") as archivo:
+        archivo.close()
+
 ctkInit()
-root = customtkinter.CTk()
-root.title("Password Manager 🔒")
-root.geometry("700x350")
+# Create Login window
+login_window = customtkinter.CTk()
+login_window.title("Login")
+login_window.geometry("150x200")
 
-frame = customtkinter.CTkFrame(master=root)
-frame.pack(side=customtkinter.LEFT, fill=customtkinter.BOTH, expand=True)
+customtkinter.CTkLabel(login_window, text="Contraseña:").pack()
+password_entry = customtkinter.CTkEntry(login_window, show="*")
+password_entry.pack()
 
-# Create buttons
-opciones = ["Crear nueva contraseña", "Ver contraseñas", "Eliminar contraseña", "Añadir contraseña personalizada"]
-botones_contrasennas = []
-boton1 = customtkinter.CTkButton(frame, text= opciones[0], command=opcionUno)
-boton1.pack(pady=20,fill=customtkinter.BOTH)
-
-boton1 = customtkinter.CTkButton(frame, text= opciones[1], command=opcionDos)
-boton1.pack(pady=20,fill=customtkinter.BOTH)
-
-boton1 = customtkinter.CTkButton(frame, text= opciones[2], command=opcionCuatro)
-boton1.pack(pady=20,fill=customtkinter.BOTH)
-
-boton1 = customtkinter.CTkButton(frame, text= opciones[3], command=opcionCinco)
-boton1.pack(pady=20,fill=customtkinter.BOTH)
-
-frame2 = customtkinter.CTkFrame(root)
-frame2.pack(pady=20, side= customtkinter.RIGHT, fill=customtkinter.BOTH, expand=True)
-
-frame3 = customtkinter.CTkScrollableFrame(frame2)
-frame3.pack(side= customtkinter.TOP, fill=customtkinter.BOTH, expand=True)
-
-entry = customtkinter.CTkEntry(frame2, font=("Arial", 14))
-entry.pack(side=customtkinter.BOTTOM, fill=customtkinter.BOTH)
-texto_entry = customtkinter.StringVar()
-
-# info_contrasennas= customtkinter.StringVar()
-# texto_contrasennas = customtkinter.CTkLabel(frame2, textvariable=info_contrasennas, font=("Arial", 14))
-# texto_contrasennas.pack(pady=20, side=customtkinter.TOP, fill=customtkinter.BOTH)
+login_button = customtkinter.CTkButton(login_window, text="Iniciar Sesión", command=login)
+login_button.pack()
 
 # Run the main event loop
-root.mainloop()
+login_window.mainloop()
 
 '''# loop = True
 # while loop:
