@@ -195,7 +195,7 @@ def open_main_window():
     boton1 = customtkinter.CTkButton(frame, text= opciones[3], fg_color="#0E46A3", command=opcionTres)
     boton1.pack(pady=20,fill=customtkinter.BOTH)
 
-    texto_info = customtkinter.CTkLabel(frame, text="Formato válido-> 'Aplicación : ContraseñaPersonalizada'")
+    texto_info = customtkinter.CTkLabel(frame, text="Formato válido:\n Aplicación : ContraseñaPersonalizada")
     texto_info.pack(fill=customtkinter.BOTH)
 
     frame2 = customtkinter.CTkFrame(root)
